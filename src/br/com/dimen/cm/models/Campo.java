@@ -3,6 +3,8 @@ package br.com.dimen.cm.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.dimen.cm.exception.ExplosionException;
+
 public class Campo {
    
 	private final int linha;
@@ -38,5 +40,34 @@ public class Campo {
 			return false;
 		}
 		
+	}
+	
+	void altenarMarcacao() {
+		if(!aberto) {
+			marcado = !marcado;
+		}
+	}
+	
+	boolean abrir() {
+		if(!aberto && !marcado) {
+			aberto = true;
+			
+			if(minado) {
+				throw new ExplosionException();
+			}
+			
+			if(vizinhancaSegura()) {
+				vizinhos.forEach(v -> v.abrir());
+			}
+			
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
+	
+	boolean vizinhancaSegura() {
+		return vizinhos.stream().noneMatch(v -> v.minado);
 	}
 }
